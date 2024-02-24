@@ -1,0 +1,339 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "VT323", monospace;
+}
+
+body,
+.snake {
+  background-color: #615eff;
+}
+
+#game-board {
+  border-radius: 100px;
+  display: grid;
+  grid-template-columns: repeat(20, 25px);
+  grid-template-rows: repeat(20, 25px);
+  margin: 5px;
+}
+
+.game-border-1 {
+  border: #595f43 solid 10px;
+  border-radius: 30px;
+  box-shadow: inset 0 0 0 10px #595f43;
+}
+
+.game-border-2 {
+  border: #abb78a solid 8px;
+  border-radius: 26px;
+  box-shadow: inset 0 0 0 10px #abb78a;
+}
+
+.game-border-3 {
+  border: #8b966c solid 30px;
+  border-radius: 20px;
+  box-shadow: inset 0 0 0 5px #8b966c;
+}
+
+#instruction-text {
+  /* position: absolute;
+  top: 60%; */
+  color: white;
+  width: 300px;
+  text-align: center;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.scores {
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+  justify-content: space-between;
+}
+
+#score {
+  color: #abb78a;
+}
+
+#score,
+#highScore {
+  font-size: 40px;
+  font-weight: bolder;
+  margin: 10px 0;
+}
+
+#highScore {
+  color: #d8ddca;
+}
+
+.game-border-3,
+#logo {
+  background-color: #c4cfa3;
+}
+
+.source {
+  background-color: white;
+  border-radius: 50%;
+  background-size: contain;
+  border: 2px solid white;
+}
+.source.hubspot {
+  background-image: url("./images/hubspot.png");
+}
+
+.source.github {
+  background-image: url("./images/github.png");
+}
+
+.source.salesforce {
+  background-image: url("./images/salesforce.png");
+}
+
+.source.slack {
+  background-image: url("./images/slack.png");
+}
+
+.source.bigquery {
+  background-image: url("./images/bigquery.png");
+}
+
+.source.snowflake {
+  background-image: url("./images/snowflake.png");
+}
+
+.source.s3 {
+  background-image: url("./images/s3.png");
+}
+
+.source.postgres {
+  background-image: url("./images/postgres.png");
+}
+
+.source.redshift {
+  background-image: url("./images/redshift.png");
+}
+
+.bug {
+  background-image: url("./images/bug.png");
+  border-radius: 50%;
+  background-size: contain;
+  border: 2px solid red;
+}
+
+#logo {
+  position: absolute;
+}
+
+.popup input {
+  padding: 10px;
+}
+
+.btn {
+  padding: 10px;
+  margin-right: 10px;
+  background-color: #615eff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.input-box {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+}
+
+#wrapper {
+  height: 100vh;
+  margin-bottom: 50px;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.game-border-1 {
+  position: relative;
+}
+#instruction {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 25px;
+}
+
+#welcome {
+  font-family: "VT323", monospace;
+  text-align: center;
+  color: #fff;
+  font-size: 3rem;
+  margin-top: 50px;
+}
+
+#score-board {
+  background-color: whitesmoke;
+  padding: 1rem;
+  /* margin-top: 4rem; */
+  /* margin-bottom: 50px; */
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+#score-board-text {
+  font-family: "VT323", monospace;
+  text-align: center;
+  color: #000;
+  font-size: 2rem;
+}
+
+/* Flipper setup for rotation */
+.flipper {
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+/* Setup for the front and back panel */
+.front,
+.back {
+  backface-visibility: hidden;
+  /* position: absolute; */
+  top: 0;
+  left: 0;
+  /* height: 100%; */
+}
+
+/* Positioning the back panel */
+.back {
+  transform: rotateY(180deg);
+  position: absolute;
+  width: 600px;
+}
+
+/* Define the flip effect on hover */
+.flip-container.scoreboard .flipper {
+  transform: rotateY(180deg);
+}
+
+.flip-container .flipper {
+  transform: rotateY(0deg);
+}
+
+.btn.flip {
+  background-color: white;
+  color: #615eff;
+}
+
+.footer {
+  width: 100%;
+  margin-top: 25px;
+  max-width: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-social {
+  background-color: transparent;
+  border: 1px solid white;
+  padding: 10px;
+}
+
+.btn-social:hover {
+  background-color: white;
+  cursor: pointer;
+}
+
+.btn-social img {
+  width: 25px;
+  height: 25px;
+}
+
+#welcome-subheader {
+  color: white;
+  width: 100%;
+  text-align: center;
+}
+@media screen and (max-width: 600px) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    max-width: 600px;
+    font-family: "VT323", monospace;
+    padding: 16px;
+  }
+
+  .game-border-1 {
+    border: #595f43 solid 5px;
+    border-radius: 30px;
+    box-shadow: inset 0 0 0 10px #595f43;
+  }
+
+  .game-border-2 {
+    border: #abb78a solid 4px;
+    border-radius: 26px;
+    box-shadow: inset 0 0 0 10px #abb78a;
+  }
+
+  .game-border-3 {
+    border: #8b966c solid 10px;
+    border-radius: 20px;
+    box-shadow: inset 0 0 0 5px #8b966c;
+  }
+  #game-board {
+    grid-template-columns: repeat(15, 20px);
+    grid-template-rows: repeat(15, 20px);
+  }
+
+  #wrapper {
+    max-width: 600px;
+    height: 100vh;
+  }
+
+  #score-board {
+    background-color: whitesmoke;
+    padding: 1rem;
+    /* margin-top: 4rem; */
+    /* margin-bottom: 50px; */
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+  }
+
+  .back {
+    transform: rotateY(180deg);
+    position: absolute;
+    width: 350px;
+  }
+
+  .footer {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .scores {
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    justify-content: space-between;
+  }
+}
