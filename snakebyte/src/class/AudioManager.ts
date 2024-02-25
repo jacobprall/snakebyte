@@ -30,7 +30,9 @@ export class AudioManager {
   }
 
   playBackground() {
-    const background = this.sounds.find((sound) => sound.name === "background")?.sound;
+    const background = this.sounds.find(
+      (sound) => sound.name === "background"
+    )?.sound;
     if (background) {
       background.loop = true;
       background.play();
@@ -38,14 +40,18 @@ export class AudioManager {
   }
 
   stopBackground() {
-    const background = this.sounds.find((sound) => sound.name === "background")?.sound;
+    const background = this.sounds.find(
+      (sound) => sound.name === "background"
+    )?.sound;
     if (background) {
       background.pause();
     }
   }
 
   isBackgroundPlaying() {
-    const background = this.sounds.find((sound) => sound.name === "background")?.sound;
+    const background = this.sounds.find(
+      (sound) => sound.name === "background"
+    )?.sound;
     if (background) {
       return !background.paused;
     }

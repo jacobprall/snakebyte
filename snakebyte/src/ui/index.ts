@@ -9,56 +9,44 @@ import {
   setValueInLocalStorage,
 } from "../utils";
 
-export const prepareGameUI = () => {
-  document.addEventListener("DOMContentLoaded", async () => {
-    const globalHighScores = (await getGlobalHighScores()) as [
-      string,
-      number
-    ][];
-    drawGlobalHighScores(globalHighScores);
+export const prepareGameUI = async () => {
+  const globalHighScores = (await getGlobalHighScores()) as [string, number][];
+  drawGlobalHighScores(globalHighScores);
 
-    setValueInLocalStorage("globalHighScores", globalHighScores);
+  setValueInLocalStorage("globalHighScores", globalHighScores);
 
-    const flipButton = document.getElementById("btn-flip");
-    const flipContainer = document.querySelector(".flip-container");
-    if (flipButton && flipContainer) {
-      flipButton.addEventListener("click", () => {
-        if (flipContainer.classList.contains("scoreboard")) {
-          flipContainer.classList.remove("scoreboard");
-          flipButton.innerText = "Leaderboard";
-          return;
-        }
-        flipContainer.classList.add("scoreboard");
-        flipButton.innerText = "Play game";
-      });
-    }
-
-    const pageUrl = window.location.href;
-    const shareTwitter = document.getElementById("shareTwitter");
-    if (shareTwitter) {
-      shareTwitter.addEventListener("click", () => {
-        window.open(
-          `https://twitter.com/intent/tweet?text=I scored ${getLocalHighScore()} on SnakeByte!&url=${pageUrl}&hashtags=snakebyte,airbyte,winterRelease`,
-          "_blank"
-        );
-      });
-    }
-
-    const shareLinkedIn = document.getElementById("shareLinkedIn");
-    if (shareLinkedIn) {
-      shareLinkedIn.addEventListener("click", () => {
-        window.open(
-          `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`,
-          "_blank"
-        );
-      });
-    }
-  });
-
-  const muteButton = document.querySelector("#toggle-music");
-  if (muteButton?.innerHTML === "") {
-    muteButton.innerHTML = "&#128266;";
+  const pageUrl = window.location.href;
+  const shareTwitter = document.getElementById("shareTwitter");
+  if (shareTwitter) {
+    shareTwitter.addEventListener("click", () => {
+      window.open(
+        `https://twitter.com/intent/tweet?text=I scored ${getLocalHighScore()} on SnakeByte!&url=${pageUrl}&hashtags=snakebyte,airbyte,winterRelease`,
+        "_blank"
+      );
+    });
   }
+
+  const shareLinkedIn = document.getElementById("shareLinkedIn");
+  if (shareLinkedIn) {
+    shareLinkedIn.addEventListener("click", () => {
+      window.open(
+        `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`,
+        "_blank"
+      );
+    });
+  }
+
+  const flipButton = document.getElementById("btn-flip");
+  const flipContainer = document.querySelector(".flip-container");
+  flipButton!.addEventListener("click", () => {
+    if (flipContainer!.classList.contains("scoreboard")) {
+      flipContainer!.classList.remove("scoreboard");
+      flipButton!.innerText = "Leaderboard";
+      return;
+    }
+    flipContainer!.classList.add("scoreboard");
+    flipButton!.innerText = "Play game";
+  });
 
   const copyUrlButton = document.querySelector("#copy-icon");
 
@@ -155,3 +143,40 @@ export function createUserInputPopup(options: PopupOptions): void {
   popupContainer.appendChild(popupBox);
   document.body.appendChild(popupContainer);
 }
+export const toggleInstructions = (clear?: boolean) => {
+  const instruction = document.getElementById("instruction");
+  const front = document.getElementById("front");
+  if (clear) {
+    if (instruction) {
+      instruction.remove();
+    }
+    return;
+  }
+
+  if (instruction) {
+    return;
+  }
+  const newInstruction = document.createElement("div");
+  newInstruction.setAttribute("id", "instruction");
+  newInstruction.setAttribute("class", "instruction-panel");
+  const optionOne = document.createElement("h1");
+  optionOne.setAttribute("id", "instruction-text");
+  optionOne.textContent = "Press spacebar to play again, or";
+
+  const optionTwo = document.createElement("h1");
+  optionTwo.setAttribute("id", "option-two");
+  optionTwo.textContent = "Add the Airbyte Winter Release to your calendar!";
+
+  const button = document.createElement("button");
+  button.setAttribute("id", "calendar-button");
+  button.setAttribute("class", "key__button");
+  button.textContent = "Add to Calendar";
+  button.onclick = () => {
+    window.open("https://airbyte.io/winter-release");
+  };
+
+  newInstruction.appendChild(optionOne);
+  newInstruction.appendChild(optionTwo);
+  newInstruction.appendChild(button);
+  front!.appendChild(newInstruction);
+};

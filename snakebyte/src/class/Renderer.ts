@@ -4,6 +4,8 @@ import upPath from "../images/up.png";
 import downPath from "../images/down.png";
 import leftPath from "../images/left.png";
 import rightPath from "../images/right.png";
+import { Consumables } from "./Consumables";
+import { Game } from "./Game";
 
 interface RendererModel {
   board: HTMLElement;
@@ -11,7 +13,7 @@ interface RendererModel {
   headShapeByDirection: { [key: string]: string };
   clearBoard: () => void;
   drawSnake: (snake: SnakeModel, direction: Direction) => void;
-  // drawConsumables: (consumables: { x: number; y: number; type: string; img: string }[]) => void;
+  drawConsumables: (consumables: Consumables[]) => void;
   createGameElement: (
     tag: string,
     className: string,
@@ -21,7 +23,7 @@ interface RendererModel {
     element: HTMLElement,
     position: { x: number; y: number }
   ) => void;
-  updateScore: (scoreElement: HTMLElement, score: number) => void;
+  updateScore: (score: number) => void;
 }
 
 export class Renderer implements RendererModel {
@@ -29,9 +31,8 @@ export class Renderer implements RendererModel {
   eyesByDirection: { [key: string]: string };
   headShapeByDirection: { [key: string]: string };
 
-  constructor() {
-    this.board =
-      document.getElementById("game-board") ?? document.createElement("div");
+  constructor(board: HTMLElement) {
+    this.board = board;
 
     this.eyesByDirection = {
       up: upPath,
@@ -49,11 +50,22 @@ export class Renderer implements RendererModel {
     };
   }
 
+  draw(game: Game) {
+    this.clearBoard();
+    this.drawSnake(game.snake, game.direction);
+    this.drawConsumables(game.consumables);
+    this.updateScore(game.snake.segments.length - 1);
+  }
+
   clearBoard() {
-    this.board.innerHTML = "";
+    const board = document.getElementById("game-board");
+    if (board) {
+      board!.innerHTML = "";
+    }
   }
 
   drawSnake(snake: SnakeModel, direction: Direction) {
+    const board = document.getElementById("game-board");
     snake.segments.forEach((segment, index) => {
       const snakeElement = this.createGameElement("div", "snake");
       this.setPosition(snakeElement, segment);
@@ -65,17 +77,23 @@ export class Renderer implements RendererModel {
       if (snake.segments.length === 1) {
         snakeElement.style.borderRadius = this.headShapeByDirection["start"];
       }
-      this.board.appendChild(snakeElement);
+      board!.appendChild(snakeElement);
     });
   }
 
-  // drawConsumables(consumables) {
-  //   consumables.forEach((consumable) => {
-  //     const consumableElement = this.createGameElement('div', consumable.type, consumable.img);
-  //     this.setPosition(consumableElement, consumable);
-  //     this.board.appendChild(consumableElement);
-  //   });
-  // }
+  drawConsumables(consumables: Consumables[]) {
+    const board = document.getElementById("game-board");
+
+    consumables.forEach((consumable) => {
+      const consumableElement = this.createGameElement(
+        "div",
+        consumable.type,
+        consumable.img
+      );
+      this.setPosition(consumableElement, consumable);
+      board!.appendChild(consumableElement);
+    });
+  }
 
   createGameElement(tag: string, className: string, img = "") {
     const element = document.createElement(tag);
@@ -88,7 +106,8 @@ export class Renderer implements RendererModel {
     element.style.gridRow = position.y.toString();
   }
 
-  updateScore(scoreElement: HTMLElement, score: number) {
-    scoreElement.textContent = score.toString();
+  updateScore(score: number) {
+    const scoreDom = document.getElementById("score");
+    scoreDom!.textContent = score.toString();
   }
 }

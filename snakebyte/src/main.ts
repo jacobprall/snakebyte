@@ -1,5 +1,6 @@
 import "./style.css";
 import { prepareGameUI } from "./ui";
+import { game } from "./class/Game";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
@@ -128,4 +129,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       </div>
     </div>
 `;
-prepareGameUI();
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await prepareGameUI();
+  game.initControls();
+  game.initMusicToggle();
+});

@@ -1,10 +1,11 @@
 import { Direction } from "../types";
+import { Game } from "./Game";
 
 interface InputManagerModel {
   board: HTMLDivElement;
   initTouchControls: (game: any) => void;
   initStartControls: (game: any) => void;
-  initHandleKeyPress: () => void;
+  initHandleKeyPress: (game: any) => void;
   isMobile: () => boolean;
   getTouchDirection: (event: TouchEvent, direction: Direction) => Direction;
 }
@@ -13,41 +14,61 @@ export class InputManager implements InputManagerModel {
   board: HTMLDivElement;
   mobileX: number | null = null;
   mobileY: number | null = null;
-  direction: Direction;
 
-  constructor(game: any) {
-    this.initTouchControls(game);
-    this.initStartControls(game);
-    this.initHandleKeyPress();
+  constructor() {
     this.board = document.getElementById("game-board") as HTMLDivElement;
-    this.direction = "right";
   }
-  initHandleKeyPress() {
+
+  initHandleKeyPress(game: any) {
     const handleKeyPress = (event: KeyboardEvent) => {
       switch (event.key) {
         case "ArrowUp":
           event.preventDefault();
-          // audioManager.play();
-          this.direction = "up";
+          game.setDirection("up");
           break;
         case "ArrowDown":
           event.preventDefault();
-          // audioTurn.play();
-          this.direction = "down";
+          game.setDirection("down");
           break;
         case "ArrowLeft":
           event.preventDefault();
-          // audioTurn.play();
-          this.direction = "left";
+          game.setDirection("left");
           break;
         case "ArrowRight":
           event.preventDefault();
-          // audioTurn.play();
-          this.direction = "right";
+          game.setDirection("right");
           break;
       }
     };
     document.addEventListener("keydown", handleKeyPress);
+  }
+
+  initTouchControls(game: Game) {
+    if (this.isMobile()) {
+      const startTouchControls = (event: TouchEvent) => {
+        const firstTouch = event.touches[0];
+        this.mobileX = firstTouch.clientX;
+        this.mobileY = firstTouch.clientY;
+      };
+
+      this.board?.addEventListener("touchstart", startTouchControls);
+      if (!game.gameStarted) {
+        game.start();
+      }
+    }
+  }
+
+  initStartControls(game: Game) {
+    const handleStartPress = (event: KeyboardEvent) => {
+      if (
+        (!game.gameStarted && event.code === "Space") ||
+        (!game.gameStarted && event.key === " ")
+      ) {
+        event.preventDefault();
+        game.start();
+      }
+    };
+    document.addEventListener("keydown", handleStartPress);
   }
 
   isMobile() {
@@ -92,33 +113,5 @@ export class InputManager implements InputManagerModel {
       yDiff < 0 ? (newDirection = "up") : (newDirection = "down");
     }
     return (newDirection as Direction) ?? direction;
-  }
-
-  initTouchControls(game: any) {
-    if (this.isMobile()) {
-      const startTouchControls = (event: TouchEvent) => {
-        const firstTouch = event.touches[0];
-        this.mobileX = firstTouch.clientX;
-        this.mobileY = firstTouch.clientY;
-      };
-
-      this.board?.addEventListener("touchstart", startTouchControls);
-      if (!game.started()) {
-        game.start();
-      }
-    }
-  }
-
-  initStartControls(game: any) {
-    const handleStartPress = (event: KeyboardEvent) => {
-      if (
-        (!game.started() && event.code === "Space") ||
-        (!game.started() && event.key === " ")
-      ) {
-        event.preventDefault();
-        game.start();
-      }
-    };
-    document.addEventListener("keydown", handleStartPress);
   }
 }
