@@ -151,6 +151,10 @@ export class Game implements GameModel {
     clearInterval(this.gameInterval);
   }
 
+  isGameStarted() {
+    return this.gameStarted;
+  }
+
   reset() {
     this.stop();
     this.snake = new Snake({ x: 10, y: 10 });

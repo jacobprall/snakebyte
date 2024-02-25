@@ -1,4 +1,5 @@
 import { Direction } from "../types";
+import { toggleInstructions } from "../ui";
 import { Game } from "./Game";
 
 interface InputManagerModel {
@@ -40,16 +41,19 @@ export class InputManager implements InputManagerModel {
   }
 
   initTouchControls(game: Game) {
-    const board = document.getElementById("game-board");
-    const startTouchControls = (event: TouchEvent) => {
+    const front = document.getElementById("front");
+    this.getTouchDirection(game);
+
+    const handleTouchStart = (event: TouchEvent) => {
+      event.preventDefault();
       const touchStart = event.touches[0];
       this.mobileX = touchStart.clientX;
       this.mobileY = touchStart.clientY;
-      game.start();
+      if (!game.isGameStarted()) {
+        game.start();
+      }
     };
-    this.getTouchDirection(game);
-
-    board?.addEventListener("touchstart", startTouchControls);
+    front!.addEventListener("touchstart", handleTouchStart);
   }
 
   initStartControls(game: Game) {
@@ -91,6 +95,10 @@ export class InputManager implements InputManagerModel {
     const board = document.getElementById("game-board");
 
     const handleTouch = (event: TouchEvent) => {
+      event.preventDefault();
+      if (!this.mobileX || !this.mobileY) {
+        return;
+      }
       let newDirection;
       let x2 = event.touches[0].clientX;
       let y2 = event.touches[0].clientY;
@@ -105,10 +113,9 @@ export class InputManager implements InputManagerModel {
         // swipe up or down
         yDiff < 0 ? (newDirection = "up") : (newDirection = "down");
       }
-      console.log({ newDirection });
-      event.preventDefault();
+
       game.setDirection(newDirection as Direction);
     };
-    board?.addEventListener("touchend", handleTouch);
+    board?.addEventListener("touchmove", handleTouch);
   }
 }
