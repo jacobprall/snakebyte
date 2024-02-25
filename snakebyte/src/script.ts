@@ -1,8 +1,3 @@
-import eatPath from "./audio/eat.mp3";
-import turnPath from "./audio/turn.mp3";
-import deadPath from "./audio/dead.mp3";
-import hitPath from "./audio/hit.mp3";
-import backgroundPath from "./audio/background-music.mp3";
 import upPath from "./images/up.png";
 import downPath from "./images/down.png";
 import leftPath from "./images/left.png";
@@ -13,14 +8,21 @@ import {
   getValueFromLocalStorage,
   setValueInLocalStorage,
 } from "./utils";
-import { createUserInputPopup, revealEventLink } from "./ui";
-import { getGlobalHighScores, handleHighScoreSubmit } from "./db/highScores";
+import { createUserInputPopup } from "./ui";
+import { getGlobalHighScores, handleHighScoreSubmit } from "./api/highScores";
+import { Snake } from "./models/Snake";
+import { Renderer } from "./models/Renderer";
+import { AudioManager } from "./models/AudioManager";
+import { InputManager } from "./models/InputManager";
 
 /**
  * HTML Elements and Global Game State
  */
 
+const renderer = new Renderer();
+
 document.addEventListener("DOMContentLoaded", async () => {
+  const front = document.getElementById("front");
   const board = document.getElementById("game-board");
   const score = document.getElementById("score");
   const highScoreText = document.getElementById("highScore");
@@ -37,6 +39,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       "redshift",
     ],
   };
+
+  // const inputManager = new InputManager(game);
   const isMobile = {
     Android: function () {
       return navigator.userAgent.match(/Android/i);
@@ -104,12 +108,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Define game variables
   const gridSize = isMobile.any() ? 15 : 20;
-  let snake = [{ x: 10, y: 10 }];
+  let snake = new Snake({ x: 10, y: 10 });
   let consumables: Consumables[] = [];
   let direction: "right" | "left" | "up" | "down" = "right";
   let gameInterval: any;
   let gameSpeedDelay = 200;
   let gameStarted = false;
+  const backgroundAudioManager = new AudioManager();
 
   /**
    * Helpers
@@ -117,7 +122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
    */
 
   function getClearPosition() {
-    const occupiedPositions = snake
+    const occupiedPositions = snake.segments
       .map((segment) => `${segment.x}-${segment.y}`)
       .concat(
         consumables.map((consumable) => `${consumable.x}-${consumable.y}`)
@@ -174,6 +179,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     x: number;
     y: number;
     img?: string;
+    audioManager: AudioManager;
   }
 
   class Consumable implements Consumables {
@@ -181,6 +187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     x: number;
     y: number;
     img: string;
+    audioManager = new AudioManager();
 
     constructor(x: number, y: number) {
       this.x = x;
@@ -189,8 +196,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         images.source[Math.floor(Math.random() * images.source.length)];
     }
     applyEffect() {
-      audioTurn.play();
-      snake.push({ ...snake[snake.length - 1] });
+      this.audioManager.playSound("turn");
+      snake.grow();
       changeSpeed();
       clearInterval(gameInterval);
       const { x, y } = getClearPosition(); // Clear past interval
@@ -211,56 +218,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     x: number;
     y: number;
     img: string = "bug";
+    audioManager = new AudioManager();
+
     constructor(x: number, y: number) {
       this.x = x;
       this.y = y;
       this.img = "bug";
     }
     applyEffect() {
-      audioDead.play();
+      this.audioManager.playSound("dead");
       resetGame();
     }
   }
 
-  /**
-   * A/V Assets
-   */
-  const audio = [eatPath, turnPath, deadPath, hitPath, backgroundPath];
-  const audioNames = Array.from({ length: audio.length }, () => new Audio());
-  for (let i = 0; i < audio.length; i++) {
-    audioNames[i].src = audio[i];
-  }
-
-  // const audioEat = audioNames[0];
-  const audioTurn = audioNames[1];
-  const audioDead = audioNames[2];
-  // const audioHit = audioNames[3];
-  const audioBackground = audioNames[4];
-
   const muteButton = document.querySelector("#toggle-music");
+  const textIcon = document.getElementById("text-icon");
 
   muteButton?.addEventListener("click", () => {
-    if (audioBackground.paused) {
-      audioBackground.play();
+    if (backgroundAudioManager.isBackgroundPlaying()) {
+      // play audio emoji
+      textIcon!.innerHTML = "⏹️";
+      backgroundAudioManager.playBackground();
     } else {
-      audioBackground.pause();
+      textIcon!.innerHTML = "🔊";
+      backgroundAudioManager.stopBackground();
     }
   });
-
-  const eyesByDirection = {
-    up: upPath,
-    down: downPath,
-    left: leftPath,
-    right: rightPath,
-  };
-
-  const headShapeByDirection = {
-    up: "3px 3px 0 0",
-    down: "0 0 3px 3px",
-    left: "3px 0 0 3px",
-    right: "0 3px 3px 0",
-    start: "3px 3px 3px 3px",
-  };
 
   /**
    * Game Logic
@@ -284,26 +267,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Draw methods
   function draw() {
     board!.innerHTML = "";
-    drawSnake();
+    renderer.drawSnake(snake, direction);
     drawConsumables();
     updateScore();
   }
 
-  function drawSnake() {
-    snake.forEach((segment, i) => {
-      const snakeElement = createGameElement("div", "snake");
-      setPosition(snakeElement, segment);
-      if (i === 0) {
-        snakeElement.style.backgroundImage = `url(${eyesByDirection[direction]})`;
-        snakeElement.style.backgroundSize = "cover";
-        snakeElement.style.borderRadius = headShapeByDirection[direction];
-      }
-      if (snake.length === 1) {
-        snakeElement.style.borderRadius = headShapeByDirection["start"];
-      }
-      board?.appendChild(snakeElement);
-    });
-  }
+  // function drawSnake() {
+  //   snake.forEach((segment, i) => {
+  //     const snakeElement = createGameElement("div", "snake");
+  //     setPosition(snakeElement, segment);
+  //     if (i === 0) {
+  //       snakeElement.style.backgroundImage = `url(${eyesByDirection[direction]})`;
+  //       snakeElement.style.backgroundSize = "cover";
+  //       snakeElement.style.borderRadius = headShapeByDirection[direction];
+  //     }
+  //     if (snake.length === 1) {
+  //       snakeElement.style.borderRadius = headShapeByDirection["start"];
+  //     }
+  //     board?.appendChild(snakeElement);
+  //   });
+  // }
 
   function drawConsumables() {
     consumables.forEach((consumable) => {
@@ -322,7 +305,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Collision logic
 
   function checkCollisionWithConsumables() {
-    const head = snake[0];
+    const head = snake.segments[0];
     consumables.forEach((consumable, index) => {
       if (head.x === consumable.x && head.y === consumable.y) {
         consumable.applyEffect();
@@ -353,7 +336,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Moving the snake
   function move() {
-    const head = { ...snake[0] };
+    const head = { ...snake.segments[0] };
     switch (direction) {
       case "up":
         head.y--;
@@ -369,9 +352,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         break;
     }
 
-    snake.unshift(head);
+    snake.segments.unshift(head);
     checkCollisionWithConsumables();
-    snake.pop();
+    snake.segments.pop();
   }
 
   function gameLoop() {
@@ -382,8 +365,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Start game function
   function startGame() {
-    audioBackground.play();
-    // toggleInstructions();
+    backgroundAudioManager.playBackground();
+    toggleInstructions(true);
     gameStarted = true; // Keep track of a running game
     const highScore = getLocalHighScore();
     highScoreText!.textContent = highScore.toString();
@@ -405,7 +388,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       switch (event.key) {
         case "ArrowUp":
           event.preventDefault();
-          // audioTurn.play();
+          // audioManager.play();
           direction = "up";
           break;
         case "ArrowDown":
@@ -442,16 +425,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function checkCollision() {
-    const head = snake[0] ?? { x: -1, y: -1 };
+    const head = snake.segments[0] ?? { x: -1, y: -1 };
 
     if (head.x < 1 || head.x > gridSize || head.y < 1 || head.y > gridSize) {
-      audioDead.play();
+      backgroundAudioManager.playSound("dead");
       resetGame();
     }
 
-    for (let i = 1; i < snake.length; i++) {
-      if (head.x === snake[i].x && head.y === snake[i].y) {
-        audioDead.play();
+    for (let i = 1; i < snake.segments.length; i++) {
+      if (head.x === snake.segments[i].x && head.y === snake.segments[i].y) {
+        backgroundAudioManager.playSound("dead");
         resetGame();
       }
     }
@@ -459,35 +442,59 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function resetGame() {
     stopGame();
-    snake = [{ x: 10, y: 10 }];
+    snake = new Snake({ x: 10, y: 10 });
     consumables = [generateConsumable("file"), generateConsumable("source")];
     direction = "right";
     gameSpeedDelay = 200;
   }
 
   function updateScore() {
-    score!.textContent = snake.length.toString();
+    score!.textContent = snake.segments.length.toString();
   }
 
   async function stopGame() {
-    const score = snake.length;
-    revealEventLink();
+    const score = snake.segments.length;
     updateGlobalHighScore(score);
     updateLocalHighScore(score);
     clearInterval(gameInterval);
     gameStarted = false;
-    addInstructions();
+    toggleInstructions();
   }
-  const addInstructions = () => {
-    const instruction = document.createElement("div");
-    instruction.setAttribute("id", "instruction");
-    const instructionText = document.createElement("h1");
-    instructionText.setAttribute("id", "instruction-text");
-    instructionText.textContent = "Press spacebar to start the game";
-    instruction.appendChild(instructionText);
-    console.log(instruction);
-    console.log(board);
-    board!.appendChild(instruction);
-    console.log(board);
+  const toggleInstructions = (clear?: boolean) => {
+    const instruction = document.getElementById("instruction");
+
+    if (clear) {
+      if (instruction) {
+        instruction.remove();
+      }
+      return;
+    }
+
+    if (instruction) {
+      return;
+    }
+    const newInstruction = document.createElement("div");
+    newInstruction.setAttribute("id", "instruction");
+    newInstruction.setAttribute("class", "instruction-panel");
+    const optionOne = document.createElement("h1");
+    optionOne.setAttribute("id", "instruction-text");
+    optionOne.textContent = "Press spacebar to play again, or";
+
+    const optionTwo = document.createElement("h1");
+    optionTwo.setAttribute("id", "option-two");
+    optionTwo.textContent = "Add the Airbyte Winter Release to your calendar!";
+
+    const button = document.createElement("button");
+    button.setAttribute("id", "calendar-button");
+    button.setAttribute("class", "key__button");
+    button.textContent = "Add to Calendar";
+    button.onclick = () => {
+      window.open("https://airbyte.io/winter-release");
+    };
+
+    newInstruction.appendChild(optionOne);
+    newInstruction.appendChild(optionTwo);
+    newInstruction.appendChild(button);
+    front!.appendChild(newInstruction);
   };
 });

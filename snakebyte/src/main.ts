@@ -1,16 +1,13 @@
 import "./style.css";
 import { prepareGameUI } from "./ui";
 
-prepareGameUI();
-
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
   <body>
     <div id="wrapper">
-      <div>
+      <div id="header">
         <h1 id="welcome">Welcome to SnakeByte!</h1>
-        <p id="welcome-subheader">Play to reveal Livestream Event Link!</p>
-
+        <p>Gobble up the sources and destinations to grow. Avoid the pesky bugs!</p>
       </div>
       <div class="scores">
         <h1 class="score" id="score">000</h1>
@@ -21,7 +18,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       </div>
       <div class="flip-container">
         <div class="flipper">
-          <div class="front">
+          <div id="front">
             <div class="game-border-1">
               <div class="game-border-2">
                 <div class="game-border-3">
@@ -37,50 +34,98 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
             </div>
           </div>
           <div class="back">
+          <div class="game-border-1">
+          <div class="game-border-2">
+            <div class="game-border-3">
             <div id="score-board">
-              <h1 id="score-board-text">High Scores</h1>
-              <div id="score-board-list">
-                <div
-                  id="score-board-list-item-1"
-                  class="score-board-item"
-                ></div>
-                <div
-                  id="score-board-list-item-2"
-                  class="score-board-item"
-                ></div>
-                <div
-                  id="score-board-list-item-3"
-                  class="score-board-item"
-                ></div>
-                <div
-                  id="score-board-list-item-4"
-                  class="score-board-item"
-                ></div>
-                <div
-                  id="score-board-list-item-5"
-                  class="score-board-item"
-                ></div>
-              </div>
+              <h1 id="score-board-text">LEADERBOARD</h1>
+              <table id="score-board-list">
+              <tr>
+              <th>Rank</th>
+              <th>Username</th>
+              <th>Score</th>
+              </tr>
+              <tr id="score-board-list-item-1">
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr id="score-board-list-item-2">
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr id="score-board-list-item-3">
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr id="score-board-list-item-4">
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr  id="score-board-list-item-5" >
+                <td class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr id="score-board-list-item-6">
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr id="score-board-list-item-7">
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr id="score-board-list-item-8">
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr id="score-board-list-item-9">
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+              <tr id="score-board-list-item-10">
+                <td class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+                <td  class="score-board-item"></td>
+              </tr>
+            </table>
+            </div>
+            </div>
+            </div>
             </div>
           </div>
         </div>
       </div>
       <div class="footer">
-        <div>
-          <button id="btn-flip" class="btn flip">See the leaderboard</button>
-          <button id="toggle-music" class="btn flip">
-            <!-- mute button -->
-            Toggle Music
+        <div class="btn-group">
+          <button id="btn-flip" class="key__button">Leaderboard</button>
+          <button id="toggle-music" class="key__button btn-social">
+          <div id="text-icon">
+            ⏹️
+          </div>
           </button>
         </div>
-        <div id="socialShare">
-          <button class="btn-social" id="shareTwitter">
+        <div class="btn-group">
+          <button class="btn-social key__button" id="shareTwitter">
             <img src="https://img.icons8.com/color/48/000000/twitter--v1.png" />
           </button>
-          <button class="btn-social" id="shareLinkedIn">
+          <button class="btn-social key__button" id="shareLinkedIn">
             <img src="https://img.icons8.com/color/48/000000/linkedin.png" />
+          </button>
+          <button class="btn-social key__button" id="copyUrlButton">
+            <div id="copy-icon">
+             🔗
+           </div>
           </button>
         </div>
       </div>
     </div>
 `;
+prepareGameUI();

@@ -2,7 +2,7 @@
  * UI
  */
 
-import { getGlobalHighScores } from "../db/highScores";
+import { getGlobalHighScores } from "../api/highScores";
 import {
   drawGlobalHighScores,
   getLocalHighScore,
@@ -25,11 +25,11 @@ export const prepareGameUI = () => {
       flipButton.addEventListener("click", () => {
         if (flipContainer.classList.contains("scoreboard")) {
           flipContainer.classList.remove("scoreboard");
-          flipButton.innerText = "See the leaderboard";
+          flipButton.innerText = "Leaderboard";
           return;
         }
         flipContainer.classList.add("scoreboard");
-        flipButton.innerText = "Back to the game";
+        flipButton.innerText = "Play game";
       });
     }
 
@@ -53,6 +53,26 @@ export const prepareGameUI = () => {
         );
       });
     }
+  });
+
+  const muteButton = document.querySelector("#toggle-music");
+  if (muteButton?.innerHTML === "") {
+    muteButton.innerHTML = "&#128266;";
+  }
+
+  const copyUrlButton = document.querySelector("#copy-icon");
+
+  copyUrlButton!.addEventListener("click", function () {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(
+      function () {
+        copyUrlButton!.innerHTML = "✅";
+      },
+      function (err) {
+        // Error handling
+        console.error("Could not copy URL: ", err);
+      }
+    );
   });
 };
 
@@ -135,11 +155,3 @@ export function createUserInputPopup(options: PopupOptions): void {
   popupContainer.appendChild(popupBox);
   document.body.appendChild(popupContainer);
 }
-
-const eventLink = `
-Event Link: TBD
-`;
-
-export const revealEventLink = () => {
-  document.querySelector("#welcome-subheader")!.textContent = eventLink;
-};

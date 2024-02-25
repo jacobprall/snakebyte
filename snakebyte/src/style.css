@@ -7,6 +7,10 @@ body {
   font-family: "VT323", monospace;
 }
 
+h1 {
+  margin-bottom: 18px;
+}
+
 body,
 .snake {
   background-color: #615eff;
@@ -191,11 +195,45 @@ body,
   flex-direction: column;
 }
 
+.game-border-1 {
+  border: #595f43 solid 10px;
+  border-radius: 30px;
+  box-shadow: inset 0 0 0 10px #595f43;
+}
+
+.game-border-2 {
+  border: #abb78a solid 8px;
+  border-radius: 26px;
+  box-shadow: inset 0 0 0 10px #abb78a;
+}
+
+.game-border-3 {
+  border: #8b966c solid 30px;
+  border-radius: 20px;
+  box-shadow: inset 0 0 0 5px #8b966c;
+}
+
+#score-board th {
+  text-transform: uppercase;
+  text-decoration: underline;
+  font-size: 1.5rem;
+}
+
+.score-board-item {
+  /* display: flex; */
+  /* justify-content: space-between; */
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+}
+
 #score-board-text {
   font-family: "VT323", monospace;
   text-align: center;
   color: #000;
   font-size: 2rem;
+  margin: 0px 0px 20px 0px;
+  text-decoration: underline;
 }
 
 /* Flipper setup for rotation */
@@ -206,7 +244,7 @@ body,
 }
 
 /* Setup for the front and back panel */
-.front,
+#front,
 .back {
   backface-visibility: hidden;
   /* position: absolute; */
@@ -246,14 +284,7 @@ body,
 }
 
 .btn-social {
-  background-color: transparent;
-  border: 1px solid white;
   padding: 10px;
-}
-
-.btn-social:hover {
-  background-color: white;
-  cursor: pointer;
 }
 
 .btn-social img {
@@ -266,6 +297,40 @@ body,
   width: 100%;
   text-align: center;
 }
+
+.instruction-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: white;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+#option-two {
+  max-width: 400px;
+}
+
+#header {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.btn-group {
+  display: flex;
+}
+
+#copy-icon {
+  margin-top: -8px;
+}
+
+#text-icon {
+  margin-top: -8px;
+}
+
 @media screen and (max-width: 600px) {
   body {
     display: flex;
@@ -336,4 +401,41 @@ body,
     max-width: 300px;
     justify-content: space-between;
   }
+}
+
+/* Keyboard */
+
+.key__button {
+  box-sizing: border-box;
+  line-height: 40px;
+  font-size: 18px;
+  font-family: "VT323", monospace;
+  text-align: center;
+  color: #555;
+  cursor: pointer;
+  height: 40px;
+  margin: 0px 4px;
+  border: 1px solid #f2f2f2;
+  border-radius: 10px;
+  background: linear-gradient(to bottom, #f9f9f9 0%, #d2d2d2 80%, #c0c0c0 100%);
+  display: inline-block;
+  transition: box-shadow 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 0 1px #888, 0 1px 0 #fff, 0 6px 0 #c0c0c0,
+    0 8px 17px rgba(68, 68, 68, 0.4), 2px 1px 4px rgba(68, 68, 68, 0.25),
+    -2px 1px 4px rgba(68, 68, 68, 0.25), 0 9px 16px rgba(68, 68, 68, 0.1);
+}
+
+.key__button:hover,
+.key__button:focus {
+  box-shadow: 0 0 1px #888, 0 1px 0 #fff, 0 4px 0 #c0c0c0,
+    0 2px 35px rgba(68, 68, 68, 0.3), 2px 2px 4px rgba(68, 68, 68, 0.25),
+    -2px 2px 4px rgba(68, 68, 68, 0.25), 0 7px 4px rgba(68, 68, 68, 0.1);
+  transform: translateY(2px);
+}
+
+.key__button:active {
+  box-shadow: 0 0 1px #888, 0 1px 0 #fff, 0 0 0 #c0c0c0,
+    0 0px 30px rgba(68, 68, 68, 0.15), 2px 2px 4px rgba(68, 68, 68, 0.25),
+    -2px 2px 4px rgba(68, 68, 68, 0.25), 0 0px 4px rgba(68, 68, 68, 0.25);
+  transform: translateY(4px);
 }
