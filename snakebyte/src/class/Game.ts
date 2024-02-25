@@ -45,10 +45,11 @@ export class Game implements GameModel {
     this.snake = new Snake({ x: 10, y: 10 });
     this.consumables = [];
     this.gameInterval = null;
-    this.gameSpeedDelay = 200;
+
     this.gameStarted = false;
     const inputManager = new InputManager();
     this.gridSize = inputManager.isMobile() ? 15 : 20;
+    this.gameSpeedDelay = inputManager.isMobile() ? 250 : 200;
     this.inputManager = inputManager;
     this.audioManager = new AudioManager();
   }
@@ -134,6 +135,7 @@ export class Game implements GameModel {
     this.addConsumable(
       new Consumable(this.getClearPosition().x, this.getClearPosition().y)
     );
+    clearInterval(this.gameInterval);
     this.gameInterval = setInterval(() => {
       this.loop();
     }, this.gameSpeedDelay);
@@ -141,13 +143,12 @@ export class Game implements GameModel {
 
   stop() {
     this.gameStarted = false;
-    clearInterval(this.gameInterval);
     const score = this.snake.segments.length;
     updateGlobalHighScore(score);
     updateLocalHighScore(score);
-    clearInterval(this.gameInterval);
     this.gameStarted = false;
     toggleInstructions();
+    clearInterval(this.gameInterval);
   }
 
   reset() {
@@ -155,7 +156,7 @@ export class Game implements GameModel {
     this.snake = new Snake({ x: 10, y: 10 });
     this.consumables = [];
     this.setDirection("right");
-    this.gameSpeedDelay = 200;
+    this.gameSpeedDelay = this.inputManager.isMobile() ? 250 : 200;
   }
 
   updateScore() {

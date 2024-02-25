@@ -2,22 +2,18 @@ import { Direction } from "../types";
 import { Game } from "./Game";
 
 interface InputManagerModel {
-  board: HTMLDivElement;
   initTouchControls: (game: any) => void;
   initStartControls: (game: any) => void;
   initHandleKeyPress: (game: any) => void;
   isMobile: () => boolean;
-  getTouchDirection: (event: TouchEvent, direction: Direction) => Direction;
+  getTouchDirection: (game: Game) => void;
 }
 
 export class InputManager implements InputManagerModel {
-  board: HTMLDivElement;
   mobileX: number | null = null;
   mobileY: number | null = null;
 
-  constructor() {
-    this.board = document.getElementById("game-board") as HTMLDivElement;
-  }
+  constructor() {}
 
   initHandleKeyPress(game: any) {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -44,18 +40,16 @@ export class InputManager implements InputManagerModel {
   }
 
   initTouchControls(game: Game) {
-    if (this.isMobile()) {
-      const startTouchControls = (event: TouchEvent) => {
-        const firstTouch = event.touches[0];
-        this.mobileX = firstTouch.clientX;
-        this.mobileY = firstTouch.clientY;
-      };
+    const board = document.getElementById("game-board");
+    const startTouchControls = (event: TouchEvent) => {
+      const touchStart = event.touches[0];
+      this.mobileX = touchStart.clientX;
+      this.mobileY = touchStart.clientY;
+      game.start();
+    };
+    this.getTouchDirection(game);
 
-      this.board?.addEventListener("touchstart", startTouchControls);
-      if (!game.gameStarted) {
-        game.start();
-      }
-    }
+    board?.addEventListener("touchstart", startTouchControls);
   }
 
   initStartControls(game: Game) {
@@ -93,25 +87,28 @@ export class InputManager implements InputManagerModel {
     return isMobileCheck.some((check) => check());
   }
 
-  getTouchDirection(event: TouchEvent, direction: Direction): Direction {
-    event.preventDefault();
-    if (!this.mobileX || !this.mobileY) return direction; // check swipe
-    // if (!gameStarted) return false;
-    let newDirection;
-    let x2 = event.touches[0].clientX;
-    let y2 = event.touches[0].clientY;
+  getTouchDirection(game: Game) {
+    const board = document.getElementById("game-board");
 
-    let xDiff = x2 - this.mobileX;
-    let yDiff = y2 - this.mobileY;
+    const handleTouch = (event: TouchEvent) => {
+      let newDirection;
+      let x2 = event.touches[0].clientX;
+      let y2 = event.touches[0].clientY;
 
-    if (Math.abs(xDiff) > Math.abs(yDiff)) {
-      // swipe left or right
-      xDiff > 0 ? (newDirection = "right") : (newDirection = "left");
-    } else {
+      let xDiff = x2 - this.mobileX ?? 0;
+      let yDiff = y2 - this.mobileY ?? 0;
+
+      if (Math.abs(xDiff) > Math.abs(yDiff)) {
+        // swipe left or right
+        xDiff > 0 ? (newDirection = "right") : (newDirection = "left");
+      } else {
+        // swipe up or down
+        yDiff < 0 ? (newDirection = "up") : (newDirection = "down");
+      }
+      console.log({ newDirection });
       event.preventDefault();
-      // swipe up or down
-      yDiff < 0 ? (newDirection = "up") : (newDirection = "down");
-    }
-    return (newDirection as Direction) ?? direction;
+      game.setDirection(newDirection as Direction);
+    };
+    board?.addEventListener("touchend", handleTouch);
   }
 }
