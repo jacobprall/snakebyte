@@ -9,6 +9,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <div id="wrapper">
       <div id="header">
         <h1 id="welcome">Welcome to SnakeByte!</h1>
+        <a style="color: white;" href="https://github.com/airbytehq/PyAirbyte" target="_blank">A PyAirbyte Game</a>
         <p>Gobble up the sources and destinations to grow. Avoid the pesky bugs!</p>
       </div>
       <div class="scores">

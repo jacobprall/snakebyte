@@ -5,15 +5,14 @@
 import { getGlobalHighScores } from "../api/highScores";
 import {
   drawGlobalHighScores,
+  drawLocalHighScore,
   getLocalHighScore,
   setValueInLocalStorage,
 } from "../utils";
 
 export const prepareGameUI = async () => {
-  const globalHighScores = (await getGlobalHighScores()) as [string, number][];
-  drawGlobalHighScores(globalHighScores);
-
-  setValueInLocalStorage("globalHighScores", globalHighScores);
+  await drawGlobalHighScores();
+  drawLocalHighScore();
 
   const pageUrl = window.location.href;
   const shareTwitter = document.getElementById("shareTwitter");
@@ -161,22 +160,24 @@ export const toggleInstructions = (clear?: boolean) => {
   newInstruction.setAttribute("class", "instruction-panel");
   const optionOne = document.createElement("h1");
   optionOne.setAttribute("id", "instruction-text");
-  optionOne.textContent = "Press spacebar to play again, or";
+  optionOne.textContent = "Or press spacebar to play again!";
 
   const optionTwo = document.createElement("h1");
   optionTwo.setAttribute("id", "option-two");
-  optionTwo.textContent = "Add the Airbyte Winter Release to your calendar!";
+  optionTwo.textContent = "Add the Airbyte Winter Release to your calendar";
 
   const button = document.createElement("button");
   button.setAttribute("id", "calendar-button");
   button.setAttribute("class", "key__button");
+  button.setAttribute("style", "margin-bottom: 20px");
   button.textContent = "Add to Calendar";
   button.onclick = () => {
     window.open("https://www.addevent.com/event/XC20189740", "_blank");
   };
 
-  newInstruction.appendChild(optionOne);
   newInstruction.appendChild(optionTwo);
   newInstruction.appendChild(button);
+  newInstruction.appendChild(optionOne);
+
   front!.appendChild(newInstruction);
 };

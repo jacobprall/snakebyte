@@ -1,7 +1,11 @@
 import { postPlay } from "../api/metrics";
 import { Direction } from "../types";
 import { toggleInstructions } from "../ui";
-import { updateGlobalHighScore, updateLocalHighScore } from "../utils";
+import {
+  drawLocalHighScore,
+  updateGlobalHighScore,
+  updateLocalHighScore,
+} from "../utils";
 import { AudioManager } from "./AudioManager";
 import { Consumable, Consumables } from "./Consumables";
 import { InputManager } from "./InputManager";
@@ -132,6 +136,7 @@ export class Game implements GameModel {
   start() {
     this.gameStarted = true;
     this.audioManager.playBackground();
+    drawLocalHighScore();
     postPlay();
     toggleInstructions(true);
     this.addConsumable(

@@ -29,7 +29,9 @@ export function getLocalHighScore(): number {
   return getValueFromLocalStorage("highScore", 0) ?? 0;
 }
 
-export const drawGlobalHighScores = (highScores: [string, number][]) => {
+export const drawGlobalHighScores = async () => {
+  const highScores = (await getGlobalHighScores()) as [string, number][];
+
   highScores.forEach((item, i) => {
     const listItem = document.getElementById(`score-board-list-item-${i + 1}`);
     if (listItem) {
@@ -44,6 +46,11 @@ export const drawGlobalHighScores = (highScores: [string, number][]) => {
   });
 };
 
+export const drawLocalHighScore = () => {
+  const highScoreText = document.getElementById("highScore");
+  highScoreText!.textContent = getLocalHighScore().toString();
+}
+
 export const handleHighScoreSubmitCb = async (
   username: string,
   score: number
@@ -51,7 +58,7 @@ export const handleHighScoreSubmitCb = async (
   await handleHighScoreSubmit(username, score);
   const newGlobalHighScores = await getGlobalHighScores();
   setValueInLocalStorage("globalHighScores", newGlobalHighScores);
-  drawGlobalHighScores(newGlobalHighScores);
+  drawGlobalHighScores();
 };
 
 export async function updateGlobalHighScore(score: number) {
@@ -79,7 +86,11 @@ export function updateLocalHighScore(score: number) {
   highScoreText!.textContent = getLocalHighScore().toString();
 }
 
-export function createGameElement(tag: string, className: string, img?: string) {
+export function createGameElement(
+  tag: string,
+  className: string,
+  img?: string
+) {
   const element = document.createElement(tag);
   element.className = className + " " + (img ? img : "");
   return element;
