@@ -115,6 +115,7 @@ body,
 
 .source.postgres {
   background-image: url("./images/postgres.png");
+  background-size: cover;
 }
 
 .source.redshift {

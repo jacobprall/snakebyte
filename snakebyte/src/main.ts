@@ -1,6 +1,6 @@
 import "./style.css";
 import { prepareGameUI } from "./ui";
-import { game } from "./class/Game";
+import { game } from "./models/Game";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 

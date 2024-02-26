@@ -6,7 +6,7 @@ export interface Consumables {
   type: "source" | "bug";
   x: number;
   y: number;
-  img?: string;
+  img: string;
   audioManager: AudioManager;
 }
 
@@ -19,6 +19,7 @@ const images = [
   "s3",
   "snowflake",
   "redshift",
+  "postgres",
 ];
 
 export class Consumable implements Consumables {
