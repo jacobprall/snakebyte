@@ -1,6 +1,5 @@
 import { AudioManager } from "./AudioManager";
 import { Game } from "./Game";
-import { Snake } from "./Snake";
 
 export interface Consumables {
   applyEffect: (game: Game) => void;

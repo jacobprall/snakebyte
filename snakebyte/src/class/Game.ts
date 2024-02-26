@@ -142,13 +142,14 @@ export class Game implements GameModel {
   }
 
   stop() {
+    clearInterval(this.gameInterval);
     this.gameStarted = false;
     const score = this.snake.segments.length;
     updateGlobalHighScore(score);
     updateLocalHighScore(score);
     this.gameStarted = false;
     toggleInstructions();
-    clearInterval(this.gameInterval);
+    this.inputManager.initTouchControls(this);
   }
 
   isGameStarted() {

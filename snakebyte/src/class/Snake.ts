@@ -1,5 +1,3 @@
-import { Direction } from "../types";
-import { Consumables } from "./Consumables";
 import { Game } from "./Game";
 
 export interface SnakeModel {

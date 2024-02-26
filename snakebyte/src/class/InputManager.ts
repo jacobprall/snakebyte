@@ -1,5 +1,4 @@
 import { Direction } from "../types";
-import { toggleInstructions } from "../ui";
 import { Game } from "./Game";
 
 interface InputManagerModel {
@@ -41,7 +40,13 @@ export class InputManager implements InputManagerModel {
   }
 
   initTouchControls(game: Game) {
-    const front = document.getElementById("front");
+    const instruction = document.getElementById("instruction-text");
+    if (this.isMobile()) {
+      instruction!.innerText = instruction!.innerText.replace(
+        "Spacebar",
+        "here"
+      );
+    }
     this.getTouchDirection(game);
 
     const handleTouchStart = (event: TouchEvent) => {
@@ -53,7 +58,7 @@ export class InputManager implements InputManagerModel {
         game.start();
       }
     };
-    front!.addEventListener("touchstart", handleTouchStart);
+    instruction!.addEventListener("touchstart", handleTouchStart);
   }
 
   initStartControls(game: Game) {
@@ -103,8 +108,8 @@ export class InputManager implements InputManagerModel {
       let x2 = event.touches[0].clientX;
       let y2 = event.touches[0].clientY;
 
-      let xDiff = x2 - this.mobileX ?? 0;
-      let yDiff = y2 - this.mobileY ?? 0;
+      let xDiff = x2 - (this.mobileX ?? 0);
+      let yDiff = y2 - (this.mobileY ?? 0);
 
       if (Math.abs(xDiff) > Math.abs(yDiff)) {
         // swipe left or right
