@@ -172,7 +172,7 @@ export const toggleInstructions = (clear?: boolean) => {
   button.setAttribute("class", "key__button");
   button.textContent = "Add to Calendar";
   button.onclick = () => {
-    window.open("https://airbyte.io/winter-release");
+    window.open("https://www.addevent.com/event/XC20189740", "_blank");
   };
 
   newInstruction.appendChild(optionOne);
