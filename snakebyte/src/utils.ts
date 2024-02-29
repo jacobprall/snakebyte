@@ -49,19 +49,20 @@ export const drawGlobalHighScores = async () => {
 export const drawLocalHighScore = () => {
   const highScoreText = document.getElementById("highScore");
   highScoreText!.textContent = getLocalHighScore().toString();
-}
+};
 
 export const handleHighScoreSubmitCb = async (
   username: string,
-  score: number
+  score: number,
+  localScore: number,
 ) => {
-  await handleHighScoreSubmit(username, score);
+  await handleHighScoreSubmit(username, score, localScore);
   const newGlobalHighScores = await getGlobalHighScores();
   setValueInLocalStorage("globalHighScores", newGlobalHighScores);
   drawGlobalHighScores();
 };
 
-export async function updateGlobalHighScore(score: number) {
+export async function updateGlobalHighScore(score: number, localHighScore: number) {
   const globalHighScores = getValueFromLocalStorage("globalHighScores", []) as [
     string,
     number
@@ -69,7 +70,7 @@ export async function updateGlobalHighScore(score: number) {
   const globalLowestHighScore = globalHighScores.slice(-1)[0][1];
   if (score > globalLowestHighScore) {
     createUserInputPopup({
-      onSubmit: (username: string) => handleHighScoreSubmitCb(username, score),
+      onSubmit: (username: string) => handleHighScoreSubmitCb(username, score, localHighScore),
       onCancel: () => console.log("Popup canceled"),
     });
   }
@@ -84,6 +85,7 @@ export function updateLocalHighScore(score: number) {
   const highScoreText = document.getElementById("highScore");
 
   highScoreText!.textContent = getLocalHighScore().toString();
+  return getLocalHighScore();
 }
 
 export function createGameElement(
@@ -102,4 +104,16 @@ export function setPosition(
 ) {
   element.style.gridColumn = String(position.x);
   element.style.gridRow = String(position.y);
+}
+
+export function getCanvasFingerprint() {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx!.textBaseline = 'top';
+  ctx!.font = '14px Arial';
+  ctx!.fillStyle = '#f60';
+  ctx!.fillRect(50, 0, 100, 50);
+  ctx!.fillStyle = '#069';
+  ctx!.fillText('Hello, world!', 2, 15);
+  return canvas.toDataURL();
 }

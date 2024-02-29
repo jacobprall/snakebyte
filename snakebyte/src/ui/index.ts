@@ -1,13 +1,10 @@
 /**
  * UI
  */
-
-import { getGlobalHighScores } from "../api/highScores";
 import {
   drawGlobalHighScores,
   drawLocalHighScore,
   getLocalHighScore,
-  setValueInLocalStorage,
 } from "../utils";
 
 export const prepareGameUI = async () => {

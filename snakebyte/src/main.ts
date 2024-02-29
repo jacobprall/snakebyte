@@ -2,6 +2,7 @@ import "./style.css";
 import { prepareGameUI } from "./ui";
 import { game } from "./models/Game";
 import { postPageView } from "./api/metrics";
+import { getCanvasFingerprint } from "./utils";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 
@@ -136,5 +137,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await prepareGameUI();
   game.initControls();
   game.initMusicToggle();
-  await postPageView();
+  const fp = getCanvasFingerprint();
+  await postPageView(fp);
 });

@@ -3,6 +3,7 @@ import { Direction } from "../types";
 import { toggleInstructions } from "../ui";
 import {
   drawLocalHighScore,
+  getCanvasFingerprint,
   updateGlobalHighScore,
   updateLocalHighScore,
 } from "../utils";
@@ -137,7 +138,8 @@ export class Game implements GameModel {
     this.gameStarted = true;
     this.audioManager.playBackground();
     drawLocalHighScore();
-    postPlay();
+    const fp = getCanvasFingerprint();
+    postPlay(fp);
     toggleInstructions(true);
     this.addConsumable(
       new Consumable(this.getClearPosition().x, this.getClearPosition().y)
@@ -149,11 +151,11 @@ export class Game implements GameModel {
   }
 
   stop() {
+    const score = this.snake.segments.length;
+    const localHighScore = updateLocalHighScore(score);
     clearInterval(this.gameInterval);
     this.gameStarted = false;
-    const score = this.snake.segments.length;
-    updateGlobalHighScore(score);
-    updateLocalHighScore(score);
+    updateGlobalHighScore(score, localHighScore);
     this.gameStarted = false;
     toggleInstructions();
     this.inputManager.initTouchControls(this);
